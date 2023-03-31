@@ -12,7 +12,7 @@ function Card({ item, selectBallot, ballot, handleSelect, ...props }: Props) {
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div
-        className={`min-h-[35rem] max-w-[30rem] bg-nominee-color hover:bg-nominee-hover transition flex items-center flex-col justify-between rounded-md overflow-hidden 
+        className={`min-h-[42rem] max-h-[42rem] max-w-[30rem] bg-nominee-color hover:bg-nominee-hover transition flex items-center flex-col justify-between rounded-md overflow-hidden 
             ${
               selectBallot && selectBallot[ballot.title]?.id === item.id
                 ? "border-4 border-nominee-color border-separate bg-nominee-hover"
@@ -28,7 +28,7 @@ function Card({ item, selectBallot, ballot, handleSelect, ...props }: Props) {
             height={400}
             placeholder='blur'
             blurDataURL={item.photoUrL}
-            className='h-auto'
+            className='h-auto w-full'
           />
         </span>
         <button className='bg-yellow-500 py-2 px-4 rounded-sm w-full' onClick={() => handleSelect(item.id, ballot)}>

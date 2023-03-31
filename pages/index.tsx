@@ -43,7 +43,7 @@ export default function Home() {
     }
   }
 
-  if (loading && !ballot) {
+  if (loading) {
     return <SkeletonNominee />
   }
 
