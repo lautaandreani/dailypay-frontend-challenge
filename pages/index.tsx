@@ -1,43 +1,25 @@
-import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
-const URL = "http://localhost:3000/api/ballots";
 
-type Item = {
-  title: string;
-  photoUrL: string;
-  id: string;
-};
-
-type Category = {
-  id: string;
-  items: Item[];
-  title: string;
-};
-
-type Data = {
-  items: Category[];
-};
+import { Category, Data, Item, SelectBallot } from "@/models/models";
+import { getBallotData } from "@/api/api";
+import Card from "@/components/Card";
 
 export default function Home() {
   const [ballot, setBallot] = useState<Data>();
-  const [selectBallot, setSelectBallot] = useState<Record<string, Item>>()
+  const [selectBallot, setSelectBallot] = useState<SelectBallot>()
   const [toggleButton, setToggleButton] = useState<boolean>(false)
+
   useEffect(() => {
-    async function getBallotData() {
+    async function fetchBallotData() {
       try {
-        const ballot = await fetch(URL);
-        if (!ballot.ok) throw new Error("Error get ballot data");
-        const response: Data = await ballot.json();
-        setBallot(response);
-        return response;
+        const response = await getBallotData()
+        setBallot(response)
       } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        }
+        if(error instanceof Error) console.error(error.message);
       }
     }
 
-    getBallotData();
+    fetchBallotData()
   }, []);
 
   useMemo(() => {
@@ -72,26 +54,7 @@ export default function Home() {
 
               <section className="grid grid-cols-3 gap-4">
                 {ballot.items.map((item: Item) => (
-                  <div className="flex flex-col gap-4 w-full" key={item.id}>
-                    <div className={`min-h-[35rem] max-w-[30rem] bg-nominee-color hover:bg-nominee-hover transition flex items-center flex-col justify-between rounded-md 
-                    ${selectBallot && selectBallot[ballot.title]?.id === item.id ? 'border-4 border-nominee-color border-separate bg-nominee-hover' : ''}`}>
-                      <span className="flex justify-center items-center flex-col">
-                        <p className="text-lg font-medium p-2 text-center truncate w-9/12">{item?.title}</p>
-                        <Image
-                          src={item.photoUrL}
-                          alt={item.title}
-                          width={300}
-                          height={400}
-                          placeholder="blur"
-                          blurDataURL={item.photoUrL}
-                          className="rounded-full w-4/5 h-auto"
-                        />
-                      </span>
-                      <button className="bg-yellow-500 py-2 px-4 rounded-sm w-full" onClick={() => handleSelect(item.id, ballot)}>
-                        Select
-                      </button>
-                    </div>
-                  </div>
+                  <Card ballot={ballot} item={item} handleSelect={handleSelect} selectBallot={selectBallot} key={item.id}/>
                 ))}
               </section>
             </div>
