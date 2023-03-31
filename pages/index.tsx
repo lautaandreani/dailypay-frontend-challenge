@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Category, Data, Item, SelectBallot } from "@/models/models"
 import { getBallotData } from "@/api/api"
 import Card from "@/components/Card"
+import SkeletonNominee from "@/ui/SkeletonNominee"
 
 export default function Home() {
   const [ballot, setBallot] = useState<Data>()
@@ -40,6 +41,10 @@ export default function Home() {
         return { ...prev, [ballot.title]: getSelectedItem }
       })
     }
+  }
+
+  if (loading && !ballot) {
+    return <SkeletonNominee />
   }
 
   return (
