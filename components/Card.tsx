@@ -1,5 +1,7 @@
-import { Category, Item, SelectBallot } from "@/models/models"
+import { useMemo } from "react"
 import Image from "next/image"
+
+import { Category, Item, SelectBallot } from "@/models/models"
 
 type Props = {
   item: Item
@@ -9,12 +11,16 @@ type Props = {
 }
 
 function Card({ item, selectBallot, ballot, handleSelect, ...props }: Props) {
+  const getSelect = useMemo(() => {
+    return selectBallot?.find((elem) => elem.nominee.id === item.id)
+  },[selectBallot])
+
   return (
     <div className='flex flex-col gap-4 w-full'>
       <div
         className={`min-h-[42rem] max-h-[42rem] max-w-[30rem] bg-nominee-color hover:bg-nominee-hover transition flex items-center flex-col justify-between rounded-md overflow-hidden 
             ${
-              selectBallot && selectBallot[ballot.title]?.id === item.id
+              getSelect
                 ? "border-4 border-nominee-color border-separate bg-nominee-hover"
                 : ""
             }`}
@@ -28,7 +34,7 @@ function Card({ item, selectBallot, ballot, handleSelect, ...props }: Props) {
             height={400}
             placeholder='blur'
             blurDataURL={item.photoUrL}
-            className='h-auto w-full'
+            className='h-auto w-full min-h-[35rem] max-h-[35rem] object-cover'
           />
         </span>
         <button className='bg-yellow-500 py-2 px-4 rounded-sm w-full' onClick={() => handleSelect(item.id, ballot)}>

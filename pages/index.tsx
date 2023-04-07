@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from "react"
 
-import { Category, Data, Item, SelectBallot } from "@/models/models"
+import { Category, Data, Item, SelectNominee } from "@/models/models"
 import { getBallotData } from "@/api/api"
 import Card from "@/components/Card"
 import SkeletonNominee from "@/ui/SkeletonNominee"
+import SuccessModal from "@/ui/SuccessModal"
 
 export default function Home() {
   const [ballot, setBallot] = useState<Data>()
-  const [selectBallot, setSelectBallot] = useState<SelectBallot>()
+  const [selectBallot, setSelectBallot] = useState<SelectNominee[]>([])
   const [toggleButton, setToggleButton] = useState<boolean>(false)
   const [loading, setLoading] = useState<null | boolean>(null)
+  const [toggleModal, setToggleModal] = useState(false)
 
   useEffect(() => {
     async function fetchBallotData() {
@@ -35,10 +37,10 @@ export default function Home() {
 
   const handleSelect = (itemId: Item["id"], ballot: Category) => {
     const getSelectedItem = ballot.items.find((nominee) => nominee.id === itemId)
-
     if (getSelectedItem) {
+      if(selectBallot.some((elem) => elem.category === ballot.title)) return
       setSelectBallot((prev) => {
-        return { ...prev, [ballot.title]: getSelectedItem }
+        return [...prev, { category: ballot.title, nominee: getSelectedItem }]
       })
     }
   }
@@ -67,10 +69,12 @@ export default function Home() {
           <button
             className='bg-nominee-color hover:bg-nominee-hover transition py-2 px-4 rounded-sm bottom-4 sticky ml-auto text-lg disabled:bg-slate-400 disabled:cursor-not-allowed'
             disabled={!toggleButton}
+            onClick={() => setToggleModal((prev) => !prev)}
           >
             Submit Ballot
           </button>
         )}
+        {toggleModal && <SuccessModal selection={selectBallot!!} setToggleModal={setToggleModal}/>}
       </main>
     </>
   )

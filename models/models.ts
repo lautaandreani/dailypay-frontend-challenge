@@ -14,4 +14,9 @@ export type Data = {
   items: Category[]
 }
 
-export type SelectBallot = Record<string, Item>
+export interface SelectNominee {
+  category: string
+  nominee: Item
+}
+
+export type SelectBallot = SelectNominee[]
